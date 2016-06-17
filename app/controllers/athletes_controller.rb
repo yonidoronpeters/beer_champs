@@ -103,10 +103,11 @@ class AthletesController < ApplicationController
       activities.each do |activity|
         if Date.parse(activity['start_date_local']).today?
           name = activity['athlete']['firstname'] + " " + activity['athlete']['lastname']
-          if athletes[Athlete.new(name: name, img_url: activity['athlete']['profile'])].empty?
-            athletes[Athlete.new(name: name, img_url: activity['athlete']['profile'])] = [activity['id']]
+          athlete = Athlete.new(name: name, img_url: activity['athlete']['profile'])
+          if athletes[athlete].empty?
+            athletes[athlete] = [activity['id']]
           else
-            athletes[Athlete.new(name: name, img_url: activity['athlete']['profile'])].push(activity['id'])
+            athletes[athlete].push(activity['id'])
           end
         end
       end
@@ -117,16 +118,22 @@ class AthletesController < ApplicationController
       calories = 0
       activity_ids.each do |id|
         activity = @client.retrieve_an_activity(id)
-        if activity['calories'].nil?
-          calories += convert_to_cal(activity['kilojoules'])
-        else
+        if not activity['calories'].nil?
           calories += activity['calories']
+        elsif not activity['kilojoules'].nil?
+          calories += kj_to_cal(activity['kilojoules'])
+        else
+          calories += time_to_cal(activity['moving_time'])
         end
       end
       calories
     end
 
-    def convert_to_cal(kj)
+    def kj_to_cal(kj)
        1.1173 * kj
+    end
+
+    def time_to_cal(sec)
+      sec * 0.08333
     end
 end
