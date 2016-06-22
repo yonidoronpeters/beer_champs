@@ -114,13 +114,14 @@ class AthletesController < ApplicationController
     end
 
     def get_or_create_athlete(activity)
-      id       = activity['athlete']['id']
-      athlete = Athlete.find(id)
-      if athlete.nil?
+      id         = activity['athlete']['id']
+      begin
+        athlete  = Athlete.find(id)
+      rescue
         username = activity['athlete']['username']
         name     = activity['athlete']['firstname'] + " " + activity['athlete']['lastname']
         img_url  = activity['athlete']['profile']
-        athlete = Athlete.create(name: name, img_url: img_url, id: id, username: username)
+        athlete  = Athlete.create(name: name, img_url: img_url, id: id, username: username)
       end
       athlete
     end
