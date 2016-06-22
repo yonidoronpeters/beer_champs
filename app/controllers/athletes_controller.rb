@@ -101,9 +101,8 @@ class AthletesController < ApplicationController
     def filter_by_date(activities)
       athletes = Hash.new([])
       activities.each do |activity|
-        if Date.parse(activity['start_date_local']).today?
-          name = activity['athlete']['firstname'] + " " + activity['athlete']['lastname']
-          athlete = Athlete.new(name: name, img_url: activity['athlete']['profile'])
+        if Date.parse(activity['start_date_local']).today? # fix bug with timezone
+          athlete = get_or_create_athlete(activity)
           if athletes[athlete].empty?
             athletes[athlete] = [activity['id']]
           else
@@ -112,6 +111,18 @@ class AthletesController < ApplicationController
         end
       end
       athletes
+    end
+
+    def get_or_create_athlete(activity)
+      id       = activity['athlete']['id']
+      athlete = Athlete.find(id)
+      if athlete.nil?
+        username = activity['athlete']['username']
+        name     = activity['athlete']['firstname'] + " " + activity['athlete']['lastname']
+        img_url  = activity['athlete']['profile']
+        athlete = Athlete.create(name: name, img_url: img_url, id: id, username: username)
+      end
+      athlete
     end
 
     def get_calories_for_athlete(activity_ids)
