@@ -1,0 +1,59 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @activity.name %>
+</p>
+
+<p>
+  <strong>Distance:</strong>
+  <%= @activity.distance %>
+</p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @activity.type %>
+</p>
+
+<p>
+  <strong>Moving time:</strong>
+  <%= @activity.moving_time %>
+</p>
+
+<p>
+  <strong>Total elevation gain:</strong>
+  <%= @activity.total_elevation_gain %>
+</p>
+
+<p>
+  <strong>Calories:</strong>
+  <%= @activity.calories %>
+</p>
+
+<p>
+  <strong>Start lat:</strong>
+  <%= @activity.start_lat %>
+</p>
+
+<p>
+  <strong>Start long:</strong>
+  <%= @activity.start_long %>
+</p>
+
+<p>
+  <strong>End lat:</strong>
+  <%= @activity.end_lat %>
+</p>
+
+<p>
+  <strong>End long:</strong>
+  <%= @activity.end_long %>
+</p>
+
+<p>
+  <strong>Kudos count:</strong>
+  <%= @activity.kudos_count %>
+</p>
+
+<%= link_to 'Edit', edit_activity_path(@activity) %> |
+<%= link_to 'Back', activities_path %>

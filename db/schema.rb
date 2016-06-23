@@ -11,7 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160623054105) do
+ActiveRecord::Schema.define(version: 20160623234121) do
+
+  create_table "activities", force: :cascade do |t|
+    t.string   "name"
+    t.float    "distance"
+    t.string   "type"
+    t.integer  "moving_time"
+    t.float    "total_elevation_gain"
+    t.integer  "calories"
+    t.float    "start_lat"
+    t.float    "start_long"
+    t.float    "end_lat"
+    t.float    "end_long"
+    t.integer  "kudos_count"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
 
   create_table "athletes", force: :cascade do |t|
     t.string   "name"

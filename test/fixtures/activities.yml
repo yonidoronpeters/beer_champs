@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  distance: 1.5
+  type: 
+  moving_time: 1
+  total_elevation_gain: 1.5
+  calories: 1
+  start_lat: 1.5
+  start_long: 1.5
+  end_lat: 1.5
+  end_long: 1.5
+  kudos_count: 1
+
+two:
+  name: MyString
+  distance: 1.5
+  type: 
+  moving_time: 1
+  total_elevation_gain: 1.5
+  calories: 1
+  start_lat: 1.5
+  start_long: 1.5
+  end_lat: 1.5
+  end_long: 1.5
+  kudos_count: 1
