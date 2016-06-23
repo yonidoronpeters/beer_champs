@@ -1,0 +1,25 @@
+
+<h1 class="center" ><b>Beers earned today</b></h1>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Name</th>
+    <th>Beers earned</th>
+    <th>Calories</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @athletes.each do |athlete| %>
+      <tr>
+        <td><%= image_tag athlete.img_url, class: "img-circle" %></td>
+        <td><%= athlete.name %></td>
+        <td><b><%= athlete.beers.floor %></b></td>
+        <td><%= athlete.calories.floor %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<%= debug(@athletes) if Rails.env.development? %>
