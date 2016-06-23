@@ -15,7 +15,18 @@
       <tr>
         <td><%= image_tag athlete.img_url, class: "img-circle" %></td>
         <td><%= athlete.name %></td>
-        <td><b><%= athlete.beers.floor %></b></td>
+        <td>
+          <% if athlete.beers.floor > 10 %>
+              <b><%= athlete.beers.floor %></b> &#x1F37A
+          <% else %>
+              <% athlete.beers.floor.times do |count| %>
+                <% if count % 5 == 0 %>
+                    <br>
+                <% end %>
+                &#x1F37A
+              <% end %>
+          <% end %>
+        </td>
         <td><%= athlete.calories.floor %></td>
       </tr>
   <% end %>
