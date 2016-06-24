@@ -1,3 +1,3 @@
 class Athlete < ActiveRecord::Base
-  has_many
+  has_many :activities
 end
