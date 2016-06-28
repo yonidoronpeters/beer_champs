@@ -4,7 +4,7 @@ class LeaderboardController < ApplicationController
     @club_id = 202870
     @athlete_url = "https://www.strava.com/athletes/"
 
-    club_activities = @client.list_club_activities(@club_id)
+    club_activities = @client.list_club_activities(@club_id, per_page: 200)
     new_activities = create_activities(club_activities)
 
     unless new_activities.empty?
