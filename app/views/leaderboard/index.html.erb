@@ -11,15 +11,15 @@
   </thead>
 
   <tbody>
-  <% @athletes.each do |athlete| %>
+  <% @totals.each do |ath| %>
       <tr>
-        <td><%= image_tag athlete.img_url, class: "img-circle" %></td>
-        <td><%= athlete.name %></td>
+        <td><%= image_tag ath[:img_url], class: "img-circle" %></td>
+        <td><%= link_to ath[:name], @athlete_url + ath[:id].to_s, class: "strava-profile" %></td>
         <td>
-          <% if athlete.beers.floor > 10 %>
-              <b><%= athlete.beers.floor %></b> &#x1F37A
+          <% if ath[:beers].floor > 10 %>
+              <b><%= ath[:beers].floor %></b> &#x1F37A
           <% else %>
-              <% athlete.beers.floor.times do |count| %>
+              <% ath[:beers].floor.times do |count| %>
                 <% if count % 5 == 0 %>
                     <br>
                 <% end %>
@@ -27,7 +27,7 @@
               <% end %>
           <% end %>
         </td>
-        <td><%= athlete.calories.floor %></td>
+        <td><%= ath[:calories].floor %></td>
       </tr>
   <% end %>
   </tbody>
