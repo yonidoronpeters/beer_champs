@@ -22,7 +22,7 @@ class Leaderboard < ActiveRecord::Base
     end
     athlete_totals
         .values
-        .sort_by { |h| h[:beers] }
+        .sort_by { |h| h[:calories] }
         .reject  { |h| h[:calories] == 0 }
         .reverse
   end
