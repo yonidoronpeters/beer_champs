@@ -12,8 +12,8 @@ class Leaderboard < ActiveRecord::Base
     athlete_totals = Hash.new
     activities.each do |activity|
       if athlete_totals[activity.athlete_id]
-        athlete_totals[activity.athlete_id].beers += activity.beers
-        athlete_totals[activity.athlete_id].calories += activity.calories
+        athlete_totals[activity.athlete_id][:beers] += activity.beers
+        athlete_totals[activity.athlete_id][:calories] += activity.calories
       else
         athlete = Athlete.find(activity.athlete_id)
         athlete_totals[athlete.id] = { name: athlete.name, id: athlete.id, img_url: athlete.img_url,
