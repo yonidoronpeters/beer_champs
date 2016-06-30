@@ -4,7 +4,7 @@ class Leaderboard < ActiveRecord::Base
   # or persist at 23:59 every night instead
   def Leaderboard.calc_todays_stats
     # TODO find out why Arthur Perry # Chicago Portage activity is not returned by query
-    todays_activities = Activity.where("created_at > ?", 1.day.ago) #created_at: Date.today.beginning_of_day..Date.today.end_of_day)
+    todays_activities = Activity.where("created_at >= ?", Time.zone.now.yesterday.utc) #created_at: Date.today.beginning_of_day..Date.today.end_of_day)
     self.reduce_stats(todays_activities)
   end
 
@@ -12,8 +12,8 @@ class Leaderboard < ActiveRecord::Base
     athlete_totals = Hash.new
     activities.each do |activity|
       if athlete_totals[activity.athlete_id]
-        athlete_totals[activity.athlete_id][:beers] += activity.beers
         athlete_totals[activity.athlete_id][:calories] += activity.calories
+        athlete_totals[activity.athlete_id][:beers] += Activity.calc_beers(athlete_totals[activity.athlete_id][:calories])
       else
         athlete = Athlete.find(activity.athlete_id)
         athlete_totals[athlete.id] = { name: athlete.name, id: athlete.id, img_url: athlete.img_url,
