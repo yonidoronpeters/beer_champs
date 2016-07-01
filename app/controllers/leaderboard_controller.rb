@@ -39,7 +39,7 @@ class LeaderboardController < ApplicationController
                             calories:             calories, start_lat: full_activity['start_latlng'][0],
                             start_long:           full_activity['start_latlng'][1], end_lat: full_activity['end_latlng'][0],
                             end_long:             full_activity['end_latlng'][1], kudos_count: full_activity['kudos_count'],
-                            created_at:           full_activity['start_date_local'], athlete_id: athlete.id,
+                            created_at:           full_activity['start_date'], athlete_id: athlete.id,
                             beers:                Activity.calc_beers(calories))
             new_activities.push(new_activity)
           rescue

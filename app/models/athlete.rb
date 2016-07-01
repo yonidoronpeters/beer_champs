@@ -5,7 +5,7 @@ class Athlete < ActiveRecord::Base
     new_activities.each do |activity|
       athlete = Athlete.find(activity.athlete_id)
       athlete.calories += activity.calories
-      athlete.beers += activity.beers
+      athlete.beers = Activity.calc_beers(athlete.calories)
       athlete.save
     end
   end
