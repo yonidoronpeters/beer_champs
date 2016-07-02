@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160702033343) do
+ActiveRecord::Schema.define(version: 20160702042824) do
 
   create_table "activities", force: :cascade do |t|
     t.string   "name"
@@ -52,9 +52,11 @@ ActiveRecord::Schema.define(version: 20160702033343) do
     t.decimal  "beers"
     t.integer  "calories"
     t.integer  "activity_id"
+    t.integer  "athlete_id"
   end
 
   add_index "leaderboards", ["activity_id"], name: "index_leaderboards_on_activity_id"
+  add_index "leaderboards", ["athlete_id"], name: "index_leaderboards_on_athlete_id"
   add_index "leaderboards", ["created_at"], name: "index_leaderboards_on_created_at"
 
 end
