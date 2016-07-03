@@ -3,11 +3,15 @@ class Leaderboard < ActiveRecord::Base
 
 
   class << self
-    # TODO return an entity of leaderboard and persist it to db. Then can easily aggregate totals for 2 days, 1 week, 1 month, etc.
-    # or persist at 23:59 every night instead
+
     def calc_todays_stats
-      todays_activities = Activity.where("created_at >= ?", Time.zone.now.yesterday.utc) #created_at: Date.today.beginning_of_day..Date.today.end_of_day)
+      todays_activities = Activity.where("created_at >= ?", Time.zone.now.yesterday.utc)
       create_leaderboard(todays_activities)
+    end
+
+    def persist_todays_leaderboard
+      @leaderboard = calc_todays_stats
+      @leaderboard.each { |l| l.save }
     end
 
     ################################################
