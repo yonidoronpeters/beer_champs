@@ -4,11 +4,11 @@ class Activity < ActiveRecord::Base
 
   class << self
 
-    def fetch_activities
+    def fetch_activities(page=1, per_page=30)
       @client      = Strava::Api::V3::Client.new(:access_token => ENV['STRAVA_TOKEN'])
       @club_id     = 202870
 
-      club_activities = @client.list_club_activities(@club_id)
+      club_activities = @client.list_club_activities(@club_id, per_page: per_page, page: page)
       new_activities  = create_activities(club_activities)
 
       unless new_activities.empty?
