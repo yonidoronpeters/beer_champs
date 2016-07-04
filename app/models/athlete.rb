@@ -10,4 +10,17 @@ class Athlete < ActiveRecord::Base
     end
   end
 
+  def Athlete.get_or_create_athlete(activity_athlete)
+    id = activity_athlete['id']
+    begin
+      athlete = Athlete.find(id)
+    rescue
+      username = activity_athlete['username']
+      name     = activity_athlete['firstname'] + " " + activity_athlete['lastname']
+      img_url  = activity_athlete['profile']
+      athlete  = Athlete.create(name: name, img_url: img_url, id: id, username: username, calories: 0.0, beers: 0.0)
+    end
+    athlete
+  end
+
 end
