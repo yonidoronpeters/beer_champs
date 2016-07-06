@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160702042824) do
+ActiveRecord::Schema.define(version: 20160705042828) do
 
   create_table "activities", force: :cascade do |t|
     t.string   "name"
@@ -29,6 +29,8 @@ ActiveRecord::Schema.define(version: 20160702042824) do
     t.datetime "updated_at",           null: false
     t.integer  "athlete_id"
     t.integer  "beers"
+    t.string   "timezone"
+    t.datetime "start_date_local"
   end
 
   add_index "activities", ["athlete_id", "created_at"], name: "index_activities_on_athlete_id_and_created_at"

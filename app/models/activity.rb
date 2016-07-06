@@ -67,7 +67,8 @@ class Activity < ActiveRecord::Base
             start_long:           full_activity['start_latlng'][1], end_lat: full_activity['end_latlng'][0],
             end_long:             full_activity['end_latlng'][1], kudos_count: full_activity['kudos_count'],
             created_at:           full_activity['start_date'], athlete_id: athlete.id,
-            beers:                calc_beers(calories))
+            beers:                calc_beers(calories), timezone: full_activity['timezone'],
+            start_date_local:     full_activity['start_date_local'])
       end
 
       def create_activity_without_loc(full_activity, athlete, calories)
@@ -77,7 +78,8 @@ class Activity < ActiveRecord::Base
             total_elevation_gain: full_activity['total_elevation_gain'],
             calories:             calories, kudos_count: full_activity['kudos_count'],
             created_at:           full_activity['start_date'], athlete_id: athlete.id,
-            beers:                calc_beers(calories))
+            beers:                calc_beers(calories), timezone: full_activity['timezone'],
+            start_date_local:     full_activity['start_date_local'])
       end
 
       def kj_to_cal(kj)
