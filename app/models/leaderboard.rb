@@ -40,7 +40,8 @@ class Leaderboard < ActiveRecord::Base
       def create_leaderboard_entry(activity, leaderboard)
         athlete                 = Athlete.find(activity.athlete_id)
         leaderboard_entry       = Leaderboard.new(athlete_name: athlete.name, athlete_id: athlete.id, img_url: athlete.img_url,
-                                                  beers: activity.beers, calories: activity.calories, activity_id: activity.id)
+                                                  beers: activity.beers, calories: activity.calories, activity_id: activity.id,
+                                                  created_at: activity.start_date_local)
         leaderboard[athlete.id] = leaderboard_entry
       end
   end

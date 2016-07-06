@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160705042828) do
+ActiveRecord::Schema.define(version: 20160706053514) do
 
   create_table "activities", force: :cascade do |t|
     t.string   "name"
@@ -31,10 +31,13 @@ ActiveRecord::Schema.define(version: 20160705042828) do
     t.integer  "beers"
     t.string   "timezone"
     t.datetime "start_date_local"
+    t.integer  "leaderboard_id"
   end
 
   add_index "activities", ["athlete_id", "created_at"], name: "index_activities_on_athlete_id_and_created_at"
   add_index "activities", ["athlete_id"], name: "index_activities_on_athlete_id"
+  add_index "activities", ["leaderboard_id", "created_at"], name: "index_activities_on_leaderboard_id_and_created_at"
+  add_index "activities", ["leaderboard_id"], name: "index_activities_on_leaderboard_id"
 
   create_table "athletes", force: :cascade do |t|
     t.string   "name"
