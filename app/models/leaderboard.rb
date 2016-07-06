@@ -34,7 +34,7 @@ class Leaderboard < ActiveRecord::Base
 
       def total_existing_entry(activity, leaderboard)
         leaderboard[activity.athlete_id].calories += activity.calories
-        leaderboard[activity.athlete_id].beers    += Activity.calc_beers(leaderboard[activity.athlete_id].calories)
+        leaderboard[activity.athlete_id].beers = Activity.calc_beers(leaderboard[activity.athlete_id].calories)
       end
 
       def create_leaderboard_entry(activity, leaderboard)
