@@ -2,8 +2,13 @@
 
 Activity.all.each do |activity|
 
-  @l_entry = Leaderboard.where(athlete_id: activity.athlete_id,
+  begin
+    @l_entry = Leaderboard.where(athlete_id: activity.athlete_id,
                               created_at: activity.start_date_local.beginning_of_day..activity.start_date_local.end_of_day).take
+  rescue
+    @l_entry = Leaderboard.where(athlete_id: activity.athlete_id,
+                                 created_at: activity.created_at.beginning_of_day..activity.created_at.end_of_day).take
+  end
   if @l_entry.nil?
     athlete = Athlete.find(activity.athlete_id)
     @l_entry = Leaderboard.create(athlete_id: athlete.id, created_at: activity.start_date_local, calories: activity.calories,
