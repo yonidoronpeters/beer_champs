@@ -15,6 +15,7 @@ Activity.all.each do |activity|
   else
     @l_entry.calories += activity.calories
     @l_entry.beers    = Activity.calc_beers(@l_entry.calories)
+    @l_entry.save
     @l_entry.activities << activity
   end
 
