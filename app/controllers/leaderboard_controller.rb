@@ -1,6 +1,7 @@
 class LeaderboardController < ApplicationController
   def index
     @athlete_url = "https://www.strava.com/athletes/"
+    @activity_url= "https://www.strava.com/activities/"
     get_date
 
     @leaderboard = Leaderboard.get_leaderboard_for_day(@date)

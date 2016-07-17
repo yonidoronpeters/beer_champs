@@ -15,9 +15,13 @@ body {
   padding-bottom: 120px;
 }
 
-.strava-profile:hover {
+.strava-link:hover, .activity-link:hover, .activity-link:visited:hover{
   color: orangered;
-  background-color: white;
+  background-color: transparent;
+}
+
+.activity-link, .activity-link:visited {
+  color: darkgray;
 }
 
 .container  .img-responsive {
