@@ -1,5 +1,6 @@
 class Leaderboard < ActiveRecord::Base
   has_many :activities
+  before_destroy :detach_dependent_activities
 
 
   class << self
@@ -52,4 +53,15 @@ class Leaderboard < ActiveRecord::Base
         leaderboard[athlete.id] = leaderboard_entry
       end
   end
+
+  #################################################
+  private
+    def detach_dependent_activities
+      if activities
+        activities.each do |a|
+          a.leaderboard_id = nil
+          a.save
+        end
+      end
+    end
 end
