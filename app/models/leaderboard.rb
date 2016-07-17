@@ -14,6 +14,13 @@ class Leaderboard < ActiveRecord::Base
       @leaderboard.each { |l| l.save }
     end
 
+    def get_leaderboard_for_day(date=Time.zone.now.beginning_of_day.utc)
+      Leaderboard
+          .where(created_at: date.midnight..date.end_of_day)
+          .sort_by { |l| l.calories }
+          .reverse
+    end
+
     ################################################
     private
       def create_leaderboard(activities)

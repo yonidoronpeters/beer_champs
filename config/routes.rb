@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   resources :activities
 
   get 'leaderboard/index'
+  post 'leaderboard/index'
   resources :athletes
   root 'leaderboard#index'
 
