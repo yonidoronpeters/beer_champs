@@ -1,27 +1,49 @@
 #!/usr/bin/env ruby
 
-Activity.all.each do |activity|
 
+def find_leaderboard_entry(activity)
   begin
-    @l_entry = Leaderboard.where(athlete_id: activity.athlete_id,
-                              created_at: activity.start_date_local.beginning_of_day..activity.start_date_local.end_of_day).take
+    l_entry = Leaderboard.where(athlete_id: activity.athlete_id,
+                                created_at: activity.start_date_local.beginning_of_day..activity.start_date_local.end_of_day).take
   rescue
-    @l_entry = Leaderboard.where(athlete_id: activity.athlete_id,
-                                 created_at: activity.created_at.beginning_of_day..activity.created_at.end_of_day).take
+    l_entry = Leaderboard.where(athlete_id: activity.athlete_id,
+                                created_at: activity.created_at.beginning_of_day..activity.created_at.end_of_day).take
+    @legacy = true
   end
-  if @l_entry.nil?
-    athlete = Athlete.find(activity.athlete_id)
-    @l_entry = Leaderboard.create(athlete_id: athlete.id, created_at: activity.start_date_local, calories: activity.calories,
-                                 beers:      activity.beers, img_url: athlete.img_url,
+  l_entry
+end
+
+def create_new_entry_for_athlete(activity)
+  athlete = Athlete.find(activity.athlete_id)
+  if @legacy
+    l_entry = Leaderboard.create(athlete_id:   athlete.id, created_at: activity.created_at, calories: activity.calories,
+                                 beers:        activity.beers, img_url: athlete.img_url,
                                  athlete_name: athlete.name, activity_id: activity.id)
-    @l_entry.activities << activity
-  elsif @l_entry.activities.include?(activity)
+  else
+    l_entry = Leaderboard.create(athlete_id:   athlete.id, created_at: activity.start_date_local, calories: activity.calories,
+                                 beers:        activity.beers, img_url: athlete.img_url,
+                                 athlete_name: athlete.name, activity_id: activity.id)
+  end
+  l_entry.activities << activity
+end
+
+def update_existing_with_activity(l_entry, activity)
+  l_entry.calories += activity.calories
+  l_entry.beers    = Activity.calc_beers(l_entry.calories)
+  l_entry.save
+  l_entry.activities << activity
+end
+
+Activity.all.each do |activity|
+  @legacy = false
+  l_entry = find_leaderboard_entry(activity)
+
+  if l_entry.nil?
+    create_new_entry_for_athlete(activity)
+  elsif l_entry.activities.include?(activity)
     next
   else
-    @l_entry.calories += activity.calories
-    @l_entry.beers    = Activity.calc_beers(@l_entry.calories)
-    @l_entry.save
-    @l_entry.activities << activity
+    update_existing_with_activity(l_entry, activity)
   end
 
 end
