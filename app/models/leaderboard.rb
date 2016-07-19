@@ -6,9 +6,8 @@ class Leaderboard < ActiveRecord::Base
   class << self
 
     def calc_new_leaderboards(new_activities)
-      todays_leaderboards = Leaderboard.where(created_at: Time.now.utc.beginning_of_day..Time.now.utc.end_of_day)
       new_activities.each do |activity|
-        update_todays_leaderboards(activity, todays_leaderboards)
+        update_todays_leaderboards(activity)
       end
     end
 
@@ -21,8 +20,9 @@ class Leaderboard < ActiveRecord::Base
 
     ################################################
     private
-      def update_todays_leaderboards(activity, todays_leaderboards)
-        l = todays_leaderboards.where(athlete_id: activity.athlete_id).take
+      def update_todays_leaderboards(activity)
+        l = Leaderboard.where(athlete_id: activity.athlete_id,
+                              created_at: activity.start_date_local.beginning_of_day..activity.start_date_local.end_of_day).take
         if l.nil?
           l = create_new_entry(activity)
         else
