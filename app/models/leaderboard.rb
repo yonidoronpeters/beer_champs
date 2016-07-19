@@ -5,14 +5,11 @@ class Leaderboard < ActiveRecord::Base
 
   class << self
 
-    def calc_todays_stats
-      todays_activities = Activity.where("created_at >= ?", Time.zone.now.yesterday.utc)
-      create_leaderboard(todays_activities)
-    end
-
-    def persist_todays_leaderboard
-      @leaderboard = calc_todays_stats
-      @leaderboard.each { |l| l.save }
+    def calc_new_leaderboards(new_activities)
+      todays_leaderboards = Leaderboard.where(created_at: Time.now.utc.beginning_of_day..Time.now.utc.end_of_day)
+      new_activities.each do |activity|
+        update_todays_leaderboards(activity, todays_leaderboards)
+      end
     end
 
     def get_leaderboard_for_day(date=Time.zone.now.beginning_of_day.utc)
@@ -24,33 +21,27 @@ class Leaderboard < ActiveRecord::Base
 
     ################################################
     private
-      def create_leaderboard(activities)
-        leaderboard = Hash.new
-        activities.each do |activity|
-          if leaderboard[activity.athlete_id]
-            total_existing_entry(activity, leaderboard)
-          else
-            create_leaderboard_entry(activity, leaderboard)
-          end
+      def update_todays_leaderboards(activity, todays_leaderboards)
+        l = todays_leaderboards.where(athlete_id: activity.athlete_id).take
+        if l.nil?
+          l = create_new_entry(activity)
+        else
+          l = update_entry(activity, l)
         end
-        leaderboard
-            .values
-            .sort_by { |l| l.calories}
-            .reject  { |l| l.calories == 0 }
-            .reverse
+        l.activities << activity
+        l.save
       end
 
-      def total_existing_entry(activity, leaderboard)
-        leaderboard[activity.athlete_id].calories += activity.calories
-        leaderboard[activity.athlete_id].beers = Activity.calc_beers(leaderboard[activity.athlete_id].calories)
+      def update_entry(activity, l)
+        l.calories += activity.calories
+        l.beers    = Activity.calc_beers(l.calories)
       end
 
-      def create_leaderboard_entry(activity, leaderboard)
-        athlete                 = Athlete.find(activity.athlete_id)
-        leaderboard_entry       = Leaderboard.new(athlete_name: athlete.name, athlete_id: athlete.id, img_url: athlete.img_url,
-                                                  beers: activity.beers, calories: activity.calories, activity_id: activity.id,
-                                                  created_at: activity.start_date_local)
-        leaderboard[athlete.id] = leaderboard_entry
+      def create_new_entry(activity)
+        athlete = Athlete.find(activity.athlete_id)
+        Leaderboard.new(athlete_name: athlete.name, athlete_id: athlete.id, img_url: athlete.img_url,
+                                  beers: activity.beers, calories: activity.calories, activity_id: activity.id,
+                                  created_at: activity.start_date_local)
       end
   end
 

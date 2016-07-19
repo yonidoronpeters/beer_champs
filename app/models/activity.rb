@@ -14,6 +14,7 @@ class Activity < ActiveRecord::Base
 
       unless new_activities.empty?
         Athlete.calc_new_totals_for_athletes(new_activities)
+        Leaderboard.calc_new_leaderboards(new_activities)
       end
     end
 
