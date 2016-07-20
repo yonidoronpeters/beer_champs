@@ -88,8 +88,9 @@ class Activity < ActiveRecord::Base
         1.1173 * kj
       end
 
+      # Based on 400cal/hr
       def time_to_cal(sec)
-        sec * 0.08333
+        sec * 0.11111
       end
 
   end
