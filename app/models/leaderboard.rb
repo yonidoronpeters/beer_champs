@@ -25,6 +25,8 @@ class Leaderboard < ActiveRecord::Base
                               created_at: activity.start_date_local.beginning_of_day..activity.start_date_local.end_of_day).take
         if l.nil?
           l = create_new_entry(activity)
+        elsif l.activities.include? activity
+          continue
         else
           l = update_entry(activity, l)
         end
@@ -35,6 +37,7 @@ class Leaderboard < ActiveRecord::Base
       def update_entry(activity, l)
         l.calories += activity.calories
         l.beers    = Activity.calc_beers(l.calories)
+        l
       end
 
       def create_new_entry(activity)
