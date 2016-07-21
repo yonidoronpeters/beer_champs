@@ -46,11 +46,10 @@ class Activity < ActiveRecord::Base
       new_activities
     end
 
-    def sync_activities(n=10)
+    def sync_activities(n=5)
       activities_to_update = Activity.order('created_at DESC').limit(n)
       activities_to_update.each do |activity|
-        updated = client.retrieve_an_activity(activity.id)
-        update_activity(activity, updated)
+        update_activity(activity)
       end
     end
 
@@ -98,16 +97,18 @@ class Activity < ActiveRecord::Base
             start_date_local:     full_activity['start_date_local'])
       end
 
-      def update_activity(activity, updated)
-        if updated.nil?
+      def update_activity(activity)
+        begin
+          updated = client.retrieve_an_activity(activity.id)
+        rescue Strava::Api::V3::ClientError
+          # activity has been deleted on strava
           activity.destroy
-        else
-          activity.update(name: updated['name'], activity_type: updated['type'], kudos_count: updated['kudos_count'])
-          begin
-            Leaderboard.find(activity.leaderboard_id).activities.reload
-          rescue ActiveRecord::RecordNotFound
-            # activity is not part of leaderboard yet. No need to reload
-          end
+        end
+        activity.update(name: updated['name'], activity_type: updated['type'], kudos_count: updated['kudos_count'])
+        begin
+          Leaderboard.find(activity.leaderboard_id).activities.reload
+        rescue ActiveRecord::RecordNotFound
+          # activity is not part of leaderboard yet. No need to reload
         end
       end
 
