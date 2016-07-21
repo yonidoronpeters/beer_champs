@@ -100,19 +100,23 @@ class Activity < ActiveRecord::Base
       def update_activity(activity)
         begin
           updated = client.retrieve_an_activity(activity.id)
+          activity.update(name: updated['name'], activity_type: updated['type'], kudos_count: updated['kudos_count'])
         rescue Strava::Api::V3::ClientError
           # activity has been deleted on strava
           activity.destroy
         end
-        activity.update(name: updated['name'], activity_type: updated['type'], kudos_count: updated['kudos_count'])
-        begin
-          Leaderboard.find(activity.leaderboard_id).activities.reload
-        rescue ActiveRecord::RecordNotFound
-          # activity is not part of leaderboard yet. No need to reload
-        end
+        reload_leaderboard(activity)
       end
 
-      def kj_to_cal(kj)
+    def reload_leaderboard(activity)
+      begin
+        Leaderboard.find(activity.leaderboard_id).activities.reload
+      rescue ActiveRecord::RecordNotFound
+        # activity is not part of leaderboard yet. No need to reload
+      end
+    end
+
+    def kj_to_cal(kj)
         1.1173 * kj
       end
 
