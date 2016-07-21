@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+n = ARGV[0]
+n = 30 if n.nil?
+
+activities_to_update = Activity.order('created_at DESC').limit(n)
+@client = Strava::Api::V3::Client.new(:access_token => ENV['STRAVA_TOKEN'])
+activities_to_update.each do |activity|
+  updated = @client.retrieve_an_activity(activity.id)
+  if updated.nil?
+    activity.destroy
+  else
+    activity.update(name: updated['name'], activity_type: updated['type'], kudos_count: updated['kudos_count'])
+    begin
+      Leaderboard.find(activity.leaderboard_id).activities.reload
+    rescue ActiveRecord::RecordNotFound
+      # activity is not part of leaderboard yet. No need to reload
+    end
+  end
+end
