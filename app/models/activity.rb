@@ -1,7 +1,7 @@
 class Activity < ActiveRecord::Base
   belongs_to :athlete
   belongs_to :leaderboard
-
+  before_destroy :detach_from_athlete, :detach_from_leaderboard
 
   class << self
 
@@ -127,4 +127,13 @@ class Activity < ActiveRecord::Base
 
   end
 
+  #################################################
+  private
+    def detach_from_leaderboard
+      leaderboard.activities.delete(self)
+    end
+
+    def detach_from_athlete
+      athlete.activities.delete(self)
+    end
 end
