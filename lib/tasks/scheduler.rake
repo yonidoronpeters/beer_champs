@@ -8,6 +8,6 @@ end
 desc "This task updates syncs the activities in the db with the ones on the strava server"
 task :sync_activities => :environment do
   puts "Syncing activities..."
-  `ruby lib/sync_activities`
+  Activity.sync_activities
   puts "Done."
 end
