@@ -131,6 +131,7 @@ class Activity < ActiveRecord::Base
   private
     def detach_from_leaderboard
       leaderboard.activities.delete(self)
+      leaderboard.destroy if leaderboard.activities.empty?
     end
 
     def detach_from_athlete
