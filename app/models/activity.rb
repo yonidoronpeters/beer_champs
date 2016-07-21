@@ -5,11 +5,17 @@ class Activity < ActiveRecord::Base
 
   class << self
 
-    def fetch_activities(page=1, per_page=30)
-      @client      = Strava::Api::V3::Client.new(:access_token => ENV['STRAVA_TOKEN'])
-      @club_id     = 202870
+    def client
+      if @client.nil?
+        @client = Strava::Api::V3::Client.new(:access_token => ENV['STRAVA_TOKEN'])
+      end
+      @client
+    end
 
-      club_activities = @client.list_club_activities(@club_id, per_page: per_page, page: page)
+    def fetch_activities(page=1, per_page=30)
+      @club_id = 202870
+
+      club_activities = client.list_club_activities(@club_id, per_page: per_page, page: page)
       new_activities  = create_activities(club_activities)
 
       unless new_activities.empty?
@@ -27,7 +33,7 @@ class Activity < ActiveRecord::Base
           end
         rescue
           athlete       = Athlete.get_or_create_athlete(activity['athlete'])
-          full_activity = @client.retrieve_an_activity(activity['id'])
+          full_activity = client.retrieve_an_activity(activity['id'])
           calories      = calc_calories(full_activity)
           begin
             new_activity = create_activity(full_activity, athlete, calories)
@@ -38,6 +44,14 @@ class Activity < ActiveRecord::Base
         end
       end
       new_activities
+    end
+
+    def sync_activities(n=10)
+      activities_to_update = Activity.order('created_at DESC').limit(n)
+      activities_to_update.each do |activity|
+        updated = client.retrieve_an_activity(activity.id)
+        update_activity(activity, updated)
+      end
     end
 
     def calc_calories(activity)
@@ -82,6 +96,19 @@ class Activity < ActiveRecord::Base
             created_at:           full_activity['start_date'], athlete_id: athlete.id,
             beers:                calc_beers(calories), timezone: full_activity['timezone'],
             start_date_local:     full_activity['start_date_local'])
+      end
+
+      def update_activity(activity, updated)
+        if updated.nil?
+          activity.destroy
+        else
+          activity.update(name: updated['name'], activity_type: updated['type'], kudos_count: updated['kudos_count'])
+          begin
+            Leaderboard.find(activity.leaderboard_id).activities.reload
+          rescue ActiveRecord::RecordNotFound
+            # activity is not part of leaderboard yet. No need to reload
+          end
+        end
       end
 
       def kj_to_cal(kj)
