@@ -6,25 +6,19 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th>Img url</th>
       <th>Calories</th>
       <th>Beers</th>
-      <th>Activity</th>
-      <th>Img url</th>
-      <th colspan="3"></th>
     </tr>
   </thead>
 
   <tbody>
-    <% @athletes.each do |athlete| %>
+    <% @athletes.order("calories DESC").each do |athlete| %>
       <tr>
-        <td><%= athlete.name %></td>
-        <td><%= athlete.calories %></td>
-        <td><%= athlete.beers %></td>
-        <td><%= athlete.activity %></td>
+        <td><%= link_to athlete.name, athlete %></td>
         <td><%= athlete.img_url %></td>
-        <td><%= link_to 'Show', athlete %></td>
-        <td><%= link_to 'Edit', edit_athlete_path(athlete) %></td>
-        <td><%= link_to 'Destroy', athlete, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= athlete.calories %></td>
+        <td><%= '%.0f' % athlete.beers %></td>
       </tr>
     <% end %>
   </tbody>

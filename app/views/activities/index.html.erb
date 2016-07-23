@@ -6,37 +6,25 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Distance</th>
+      <th>Distance (km)</th>
       <th>Type</th>
       <th>Moving time</th>
-      <th>Total elevation gain</th>
+      <th>Total elevation gain (m) </th>
       <th>Calories</th>
-      <th>Start lat</th>
-      <th>Start long</th>
-      <th>End lat</th>
-      <th>End long</th>
       <th>Kudos count</th>
-      <th colspan="3"></th>
     </tr>
   </thead>
 
   <tbody>
-    <% @activities.each do |activity| %>
+    <% @activities.reverse_order.each do |activity| %>
       <tr>
-        <td><%= activity.name %></td>
-        <td><%= activity.distance %></td>
-        <td><%= activity.type %></td>
+        <td><%= link_to activity.name, activity %></td>
+        <td><%= '%.1f' % (activity.distance / 1000) %></td>
+        <td><%= activity.activity_type %></td>
         <td><%= activity.moving_time %></td>
         <td><%= activity.total_elevation_gain %></td>
         <td><%= activity.calories %></td>
-        <td><%= activity.start_lat %></td>
-        <td><%= activity.start_long %></td>
-        <td><%= activity.end_lat %></td>
-        <td><%= activity.end_long %></td>
         <td><%= activity.kudos_count %></td>
-        <td><%= link_to 'Show', activity %></td>
-        <td><%= link_to 'Edit', edit_activity_path(activity) %></td>
-        <td><%= link_to 'Destroy', activity, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -44,4 +32,3 @@
 
 <br>
 
-<%= link_to 'New Activity', new_activity_path %>
