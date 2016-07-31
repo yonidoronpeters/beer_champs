@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20160706053514) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "activities", force: :cascade do |t|
     t.string   "name"
     t.float    "distance"
@@ -34,10 +37,10 @@ ActiveRecord::Schema.define(version: 20160706053514) do
     t.integer  "leaderboard_id"
   end
 
-  add_index "activities", ["athlete_id", "created_at"], name: "index_activities_on_athlete_id_and_created_at"
-  add_index "activities", ["athlete_id"], name: "index_activities_on_athlete_id"
-  add_index "activities", ["leaderboard_id", "created_at"], name: "index_activities_on_leaderboard_id_and_created_at"
-  add_index "activities", ["leaderboard_id"], name: "index_activities_on_leaderboard_id"
+  add_index "activities", ["athlete_id", "created_at"], name: "index_activities_on_athlete_id_and_created_at", using: :btree
+  add_index "activities", ["athlete_id"], name: "index_activities_on_athlete_id", using: :btree
+  add_index "activities", ["leaderboard_id", "created_at"], name: "index_activities_on_leaderboard_id_and_created_at", using: :btree
+  add_index "activities", ["leaderboard_id"], name: "index_activities_on_leaderboard_id", using: :btree
 
   create_table "athletes", force: :cascade do |t|
     t.string   "name"
@@ -60,8 +63,12 @@ ActiveRecord::Schema.define(version: 20160706053514) do
     t.integer  "athlete_id"
   end
 
-  add_index "leaderboards", ["activity_id"], name: "index_leaderboards_on_activity_id"
-  add_index "leaderboards", ["athlete_id"], name: "index_leaderboards_on_athlete_id"
-  add_index "leaderboards", ["created_at"], name: "index_leaderboards_on_created_at"
+  add_index "leaderboards", ["activity_id"], name: "index_leaderboards_on_activity_id", using: :btree
+  add_index "leaderboards", ["athlete_id"], name: "index_leaderboards_on_athlete_id", using: :btree
+  add_index "leaderboards", ["created_at"], name: "index_leaderboards_on_created_at", using: :btree
 
+  add_foreign_key "activities", "athletes"
+  add_foreign_key "activities", "leaderboards"
+  add_foreign_key "leaderboards", "activities"
+  add_foreign_key "leaderboards", "athletes"
 end

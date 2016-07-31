@@ -148,7 +148,6 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
-    sqlite3 (1.3.9)
     strava-api-v3 (0.6.0)
       httmultiparty
       multi_json
@@ -188,7 +187,6 @@ DEPENDENCIES
   sass-rails (= 5.0.2)
   sdoc (= 0.4.0)
   spring (= 1.1.3)
-  sqlite3 (= 1.3.9)
   strava-api-v3
   turbolinks (= 2.3.0)
   uglifier (= 2.5.3)
