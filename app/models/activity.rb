@@ -1,16 +1,12 @@
+require 'client_utils'
+
 class Activity < ActiveRecord::Base
+  extend ClientUtils
   belongs_to :athlete
   belongs_to :leaderboard
   before_destroy :detach_from_athlete, :detach_from_leaderboard
 
   class << self
-
-    def client
-      if @client.nil?
-        @client = Strava::Api::V3::Client.new(:access_token => ENV['STRAVA_TOKEN'])
-      end
-      @client
-    end
 
     def fetch_activities(page=1, per_page=30)
       @club_id = 202870
