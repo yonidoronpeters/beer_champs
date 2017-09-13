@@ -1,4 +1,4 @@
-# The unoffical hybris beer consumption justification meter
+# The official unoffical hybris beer consumption justification meter
 
 As we work hard to stay in shape, one must wonder what is the amount of beer it would take to replenish the calories we burned.
 This is where this application comes in.
