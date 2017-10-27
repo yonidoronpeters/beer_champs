@@ -28,6 +28,7 @@ group :development, :test do
   gem 'byebug',     '~> 9.1.0'
   gem 'spring',     '~> 2.0.2'
   gem 'whenever',   :require => false
+  gem 'dotenv',     '~> 2.2.0'
 end
 
 group :production do

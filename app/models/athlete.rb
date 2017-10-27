@@ -2,9 +2,9 @@ require 'client_utils'
 
 class Athlete < ApplicationRecord
   extend ClientUtils
-  has_many :activities
+  has_many :activities, dependent: :nullify
 
-  def Athlete.calc_new_totals_for_athletes(new_activities)
+  def self.calc_new_totals_for_athletes(new_activities)
     new_activities.each do |activity|
       athlete = Athlete.find(activity.athlete_id)
       athlete.calories += activity.calories
@@ -13,7 +13,7 @@ class Athlete < ApplicationRecord
     end
   end
 
-  def Athlete.get_or_create_athlete(activity_athlete)
+  def self.get_or_create_athlete(activity_athlete)
     id = activity_athlete['id']
     begin
       athlete = Athlete.find(id)
@@ -26,7 +26,7 @@ class Athlete < ApplicationRecord
     athlete
   end
 
-  def Athlete.sync_athletes(athletes=nil)
+  def self.sync_athletes(athletes=nil)
     athletes ||= Athlete.all
     athletes.each do |athlete|
       begin

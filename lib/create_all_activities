@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 begin
-  page, per_page = ARGV
+  page, per_page = ARGV.map(&:to_i)
   page = 1 if page.nil?
   per_page = 30 if per_page.nil?
   until Activity.fetch_activities(page, per_page).nil?
     page += 1
   end
-rescue
-  puts "Problem creating all activities."
+rescue => e
+  puts "Problem creating all activities.\nError: #{e}\nBacktrace: #{e.backtrace}"
 end

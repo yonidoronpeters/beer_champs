@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160706053514) do
+ActiveRecord::Schema.define(version: 20171027050112) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,10 +33,9 @@ ActiveRecord::Schema.define(version: 20160706053514) do
     t.integer "beers"
     t.string "timezone"
     t.datetime "start_date_local"
-    t.integer "leaderboard_id"
+    t.bigint "leaderboard_id"
     t.index ["athlete_id", "created_at"], name: "index_activities_on_athlete_id_and_created_at"
     t.index ["athlete_id"], name: "index_activities_on_athlete_id"
-    t.index ["leaderboard_id", "created_at"], name: "index_activities_on_leaderboard_id_and_created_at"
     t.index ["leaderboard_id"], name: "index_activities_on_leaderboard_id"
   end
 
@@ -57,15 +56,12 @@ ActiveRecord::Schema.define(version: 20160706053514) do
     t.string "img_url"
     t.decimal "beers"
     t.integer "calories"
-    t.integer "activity_id"
     t.integer "athlete_id"
-    t.index ["activity_id"], name: "index_leaderboards_on_activity_id"
     t.index ["athlete_id"], name: "index_leaderboards_on_athlete_id"
     t.index ["created_at"], name: "index_leaderboards_on_created_at"
   end
 
   add_foreign_key "activities", "athletes"
   add_foreign_key "activities", "leaderboards"
-  add_foreign_key "leaderboards", "activities"
   add_foreign_key "leaderboards", "athletes"
 end
