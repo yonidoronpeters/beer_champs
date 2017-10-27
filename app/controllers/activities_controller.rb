@@ -1,6 +1,4 @@
 class ActivitiesController < ApplicationController
-  before_action :set_activity, only: [:show]
-
   # GET /activities
   # GET /activities.json
   def index
@@ -10,11 +8,6 @@ class ActivitiesController < ApplicationController
   # GET /activities/1
   # GET /activities/1.json
   def show
+    @activity = Activity.find(params[:id])
   end
-
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_activity
-      @activity = Activity.find(params[:id])
-    end
 end
