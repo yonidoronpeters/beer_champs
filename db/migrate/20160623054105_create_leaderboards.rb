@@ -1,4 +1,4 @@
-class CreateLeaderboards < ActiveRecord::Migration
+class CreateLeaderboards < ActiveRecord::Migration[4.2]
   def change
     create_table :leaderboards do |t|
 

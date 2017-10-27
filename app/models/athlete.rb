@@ -1,6 +1,6 @@
 require 'client_utils'
 
-class Athlete < ActiveRecord::Base
+class Athlete < ApplicationRecord
   extend ClientUtils
   has_many :activities
 

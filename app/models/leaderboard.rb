@@ -1,4 +1,4 @@
-class Leaderboard < ActiveRecord::Base
+class Leaderboard < ApplicationRecord
   has_many :activities
   before_destroy :detach_dependent_activities
 

@@ -1,6 +1,6 @@
 require 'client_utils'
 
-class Activity < ActiveRecord::Base
+class Activity < ApplicationRecord
   extend ClientUtils
   belongs_to :athlete
   belongs_to :leaderboard
