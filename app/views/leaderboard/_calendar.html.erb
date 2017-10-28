@@ -1,32 +1,16 @@
-<%= form_tag "/leaderboard/index", class: "choose-date-form" do %>
-    <div id="activity_date">
-      <%= date_select :activities, :activities_date, class: "dropdown btn btn-default dropdown-toggle" %>
-      <%= submit_tag "Submit", class: "btn btn-primary" %>
+<div class='container'>
+  <%= form_tag '/leaderboard', method: :get, data: {remote: true}, id: 'choose-date-form' do %>
+    <div class='row activity_date'>
+      <div class='col-sm-4 col-sm-offset-4'>
+        <div class='form-group'>
+          <div class='input-group date' id='datepicker'>
+            <input name='activities_date' id='datepicker-input' type='text' class='form-control' value=<%=@date.strftime('%Y/%m/%d')%> />
+            <span class='input-group-addon'>
+              <span class='glyphicon glyphicon-calendar'></span>
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
-<% end %>
-
-
-<!-- <script type="application/javascript">
-
-  $(function () {
-    $('#activity_date').datetimepicker({
-      format: 'DD/MM/YYYY',
-      inline: true
-      // TODO get range to work. enabledDates: []
-    }).on('dp.change', function () {
-      $('.choose-date-form').submit();
-    })
-  });
-</script> -->
-<!--<div class="container" id="datepicker-container">-->
-<!--<div class="col-sm-6" style="height:250px;" id="datepicker-center">-->
-<!--<div style="overflow:hidden;">-->
-<!--<div class="form-group">-->
-<!--<div class="row">-->
-<!--<div class="col-md-6">-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
+  <% end %>
+</div>

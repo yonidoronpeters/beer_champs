@@ -25,6 +25,7 @@ gem 'json',                 '~> 2.1.0'
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
+  gem 'pry'
   gem 'byebug',     '~> 9.1.0'
   gem 'spring',     '~> 2.0.2'
   gem 'whenever',   :require => false

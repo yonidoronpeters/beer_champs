@@ -1,46 +1,19 @@
-
-<h1 class="center" ><b>Beers earned on <%= @date %></b></h1>
+<h1 class="center"><b>
+  <% if @leaderboard.empty? %>
+    No one earned their beer today
+  <% else %>
+    Beers earned on <%= @date %>
+  <% end %>
+</b></h1>
 <br>
 <%= render 'calendar' %>
 
-<table class="table table-striped">
-  <thead>
-  <tr>
-    <th></th>
-    <th>Name</th>
-    <th>Activities</th>
-    <th>Beers earned</th>
-    <th>Calories</th>
-  </tr>
-  </thead>
-
-  <tbody>
-  <% @leaderboard.each do |l| %>
-      <tr>
-        <td><%= image_tag l.img_url, class: "img-responsive img-circle" %></td>
-        <td><%= link_to l.athlete_name, @athlete_url + l.athlete_id.to_s, class: "strava-link" %></td>
-        <td>
-          <% l.activities.each do |activity| %>
-            <%= link_to activity.activity_type + ": \"" + activity.name + "\"",
-                        @activity_url + activity.id.to_s, class: "strava-link activity-link bold" %><br>
-          <% end %>
-        </td>
-        <td>
-          <% if l.beers.floor > 10 %>
-              <b><%= l.beers.floor %></b> &#x1F37A
-          <% else %>
-              <% l.beers.floor.times do |count| %>
-                <% if count % 5 == 0 %>
-                    <br>
-                <% end %>
-                &#x1F37A <!--beer emoji-->
-              <% end %>
-          <% end %>
-        </td>
-        <td><%= l.calories.floor %></td>
-      </tr>
+<div id="leaderboard-table">
+  <% if @leaderboard.empty? %>
+    <%= render 'no_beers' %>
+  <% else %>
+    <%= render 'leaderboard_activities' %>
   <% end %>
-  </tbody>
-</table>
+</div>
 
 <%= debug(params) if Rails.env.development? %>
