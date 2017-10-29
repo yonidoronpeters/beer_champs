@@ -3,12 +3,11 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(document).ready ->
-  picker = $('#datepicker').datetimepicker
+  $('#datepicker').datetimepicker
     format: 'YYYY/MM/DD'
 
   $('#datepicker').on 'dp.change', ->
     $('#choose-date-form').submit()
 
-  $('#datepicker input').click (e) ->
-    e.preventDefault();
+  $('#datepicker input').click ->
     $(this).parents('#datepicker').data('DateTimePicker').toggle()

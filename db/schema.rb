@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171027050112) do
+ActiveRecord::Schema.define(version: 20171029030051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,8 @@ ActiveRecord::Schema.define(version: 20171027050112) do
     t.string "timezone"
     t.datetime "start_date_local"
     t.bigint "leaderboard_id"
+    t.date "start_date_only"
+    t.datetime "start_time"
     t.index ["athlete_id", "created_at"], name: "index_activities_on_athlete_id_and_created_at"
     t.index ["athlete_id"], name: "index_activities_on_athlete_id"
     t.index ["leaderboard_id"], name: "index_activities_on_leaderboard_id"
@@ -57,6 +59,8 @@ ActiveRecord::Schema.define(version: 20171027050112) do
     t.decimal "beers"
     t.integer "calories"
     t.integer "athlete_id"
+    t.date "activity_date_local"
+    t.index ["athlete_id", "activity_date_local"], name: "index_leaderboards_on_athlete_id_and_activity_date_local"
     t.index ["athlete_id"], name: "index_leaderboards_on_athlete_id"
     t.index ["created_at"], name: "index_leaderboards_on_created_at"
   end

@@ -1,24 +1,16 @@
 #!/usr/bin/env ruby
 
-
 def find_leaderboard_entry(activity)
-  begin
-    l_entry = Leaderboard.where(athlete_id: activity.athlete_id,
-                                created_at: activity.start_date_local.beginning_of_day..activity.start_date_local.end_of_day).take
-  rescue
-    l_entry = Leaderboard.where(athlete_id: activity.athlete_id,
-                                created_at: activity.created_at.beginning_of_day..activity.created_at.end_of_day).take
-    @legacy = true
-  end
-  l_entry
+  Leaderboard.where(athlete_id: activity.athlete_id,
+                    activity_date_local: activity.start_date_only).first
 end
 
 def create_new_entry_for_athlete(activity)
   athlete = Athlete.find(activity.athlete_id)
-  created_at = @legacy ? activity.created_at : activity.start_date_local
   l_entry = Leaderboard.create(
-    athlete_id: athlete.id, created_at: created_at, calories: activity.calories,
-    beers: activity.beers, img_url: athlete.img_url, athlete_name: athlete.name
+    athlete_id: athlete.id, activity_date_local: activity.start_date_only,
+    calories: activity.calories, beers: activity.beers,
+    img_url: athlete.img_url, athlete_name: athlete.name
   )
   l_entry.activities << activity
 end
@@ -30,16 +22,10 @@ def update_existing_with_activity(l_entry, activity)
   l_entry.activities << activity
 end
 
-Activity.all.each do |activity|
-  @legacy = false
-  l_entry = find_leaderboard_entry(activity)
-
-  if l_entry.nil?
-    create_new_entry_for_athlete(activity)
-  elsif l_entry.activities.include?(activity)
-    next
+Activity.find_each do |activity|
+  if l_entry = find_leaderboard_entry(activity)
+    update_existing_with_activity(l_entry, activity) unless l_entry.activities.include?(activity)
   else
-    update_existing_with_activity(l_entry, activity)
+    create_new_entry_for_athlete(activity)
   end
-
 end

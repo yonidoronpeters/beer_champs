@@ -6,17 +6,15 @@ class Leaderboard < ApplicationRecord
       new_activities.each { |activity| update_leaderboard_with activity }
     end
 
-    def get_leaderboard_for_day(date=Time.zone.now.beginning_of_day.utc)
-      Leaderboard
-          .where(created_at: date.midnight..date.end_of_day)
-          .order(calories: :desc)
+    def get_leaderboard_for_day(date = Date.current)
+      Leaderboard.where(activity_date_local: date).order(calories: :desc)
     end
 
     ################################################
     private
       def update_leaderboard_with(activity)
         l = Leaderboard.where(athlete_id: activity.athlete_id,
-                              created_at: activity.start_date_local.beginning_of_day..activity.start_date_local.end_of_day).take
+                              activity_date_local: activity.start_date_only).first
         return if l && l.activities.include?(activity)
         l = l ? update_entry(activity, l) : create_new_entry(activity)
         l.activities << activity
@@ -36,7 +34,8 @@ class Leaderboard < ApplicationRecord
         Leaderboard.create!(
           athlete_name: athlete.name, athlete_id: athlete.id,
           img_url: athlete.img_url, beers: activity.beers,
-          calories: activity.calories, created_at: activity.start_date_local
+          calories: activity.calories,
+          activity_date_local: activity.start_date_only
         )
       end
   end

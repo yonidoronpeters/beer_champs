@@ -37,7 +37,7 @@ class Activity < ApplicationRecord
     end
 
     def sync_activities(n=5)
-      Activity.order(created_at: :desc).limit(n).each do |activity|
+      Activity.order(start_time: :desc).limit(n).each do |activity|
         update_activity(activity)
       end
     end
@@ -63,28 +63,46 @@ class Activity < ApplicationRecord
     private
 
       def create_activity(full_activity, athlete, calories)
+        st = full_activity['start_date_local']
+        start_date = Date.parse(st) rescue Date.parse(full_activity['start_date'])
         Activity.create(
-          id:                   full_activity['id'], name: full_activity['name'], distance: full_activity['distance'],
-          activity_type:        full_activity['type'], moving_time: full_activity['moving_time'],
+          id:                   full_activity['id'],
+          name:                 full_activity['name'],
+          distance:             full_activity['distance'],
+          activity_type:        full_activity['type'],
+          moving_time:          full_activity['moving_time'],
           total_elevation_gain: full_activity['total_elevation_gain'],
-          calories:             calories, start_lat: full_activity['start_latlng'][0],
-          start_long:           full_activity['start_latlng'][1], end_lat: full_activity['end_latlng'][0],
-          end_long:             full_activity['end_latlng'][1], kudos_count: full_activity['kudos_count'],
-          created_at:           full_activity['start_date'], athlete_id: athlete.id,
-          beers:                calc_beers(calories), timezone: full_activity['timezone'],
-          start_date_local:     full_activity['start_date_local']
+          calories:             calories,
+          start_lat:            full_activity['start_latlng'][0],
+          start_long:           full_activity['start_latlng'][1],
+          end_lat:              full_activity['end_latlng'][0],
+          end_long:             full_activity['end_latlng'][1],
+          kudos_count:          full_activity['kudos_count'],
+          start_date_only:      start_date,
+          start_time:           Time.parse(full_activity['start_date']),
+          athlete_id:           athlete.id,
+          beers:                calc_beers(calories),
+          timezone:             full_activity['timezone'],
         )
       end
 
       def create_activity_without_loc(full_activity, athlete, calories)
+        st = full_activity['start_date_local']
+        start_date = Date.parse(st) rescue Date.parse(full_activity['start_date'])
         Activity.create(
-          id:                   full_activity['id'], name: full_activity['name'], distance: full_activity['distance'],
-          activity_type:        full_activity['type'], moving_time: full_activity['moving_time'],
+          id:                   full_activity['id'],
+          name:                 full_activity['name'],
+          distance:             full_activity['distance'],
+          activity_type:        full_activity['type'],
+          moving_time:          full_activity['moving_time'],
           total_elevation_gain: full_activity['total_elevation_gain'],
-          calories:             calories, kudos_count: full_activity['kudos_count'],
-          created_at:           full_activity['start_date'], athlete_id: athlete.id,
-          beers:                calc_beers(calories), timezone: full_activity['timezone'],
-          start_date_local:     full_activity['start_date_local']
+          calories:             calories,
+          kudos_count:          full_activity['kudos_count'],
+          start_date_only:      start_date,
+          start_time:           Time.parse(full_activity['start_date']),
+          athlete_id:           athlete.id,
+          beers:                calc_beers(calories),
+          timezone:             full_activity['timezone'],
         )
       end
 

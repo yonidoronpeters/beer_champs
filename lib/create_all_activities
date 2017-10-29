@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
+Dotenv.load if Rails.env.development?
+
 begin
   page, per_page = ARGV.map(&:to_i)
-  page = 1 if page.nil?
-  per_page = 30 if per_page.nil?
+  page ||= 1
+  per_page ||= 30
   until Activity.fetch_activities(page, per_page).nil?
     page += 1
   end
