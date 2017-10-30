@@ -118,11 +118,7 @@ class Activity < ApplicationRecord
       end
 
       def reload_leaderboard(activity)
-        begin
-          Leaderboard.find(activity.leaderboard_id).activities.reload
-        rescue ActiveRecord::RecordNotFound
-          # activity is not part of leaderboard yet. No need to reload
-        end
+        activity.leaderboard.activities.reload if activity.leaderboard
       end
 
       def kj_to_cal(kj)

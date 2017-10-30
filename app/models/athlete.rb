@@ -3,6 +3,7 @@ require 'client_utils'
 class Athlete < ApplicationRecord
   extend ClientUtils
   has_many :activities, dependent: :nullify
+  has_many :leaderboards, dependent: :nullify
 
   def self.calc_new_totals_for_athletes(new_activities)
     new_activities.each do |activity|

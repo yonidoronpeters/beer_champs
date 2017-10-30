@@ -1,5 +1,6 @@
 class Leaderboard < ApplicationRecord
   has_many :activities, dependent: :nullify
+  belongs_to :athlete
 
   class << self
     def calc_new_leaderboards(new_activities)
