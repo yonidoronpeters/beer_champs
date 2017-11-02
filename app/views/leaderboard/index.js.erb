@@ -1,0 +1,7 @@
+<% if @leaderboard.empty? %>
+  $('h1.center').html('<b>No one earned their beer today</b>');
+  $('#leaderboard-table').html("<%= escape_javascript(render partial: 'no_beers') %>");
+<% else %>
+  $('h1.center').html("<b>Beers earned on <%= @date %></b>");
+  $('#leaderboard-table').html("<%= escape_javascript(render partial: 'leaderboard_activities') %>");
+<% end %>

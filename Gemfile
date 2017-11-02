@@ -1,20 +1,19 @@
 source 'https://rubygems.org'
-
+ruby '2.4.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails',                '4.2.0'
-gem 'bootstrap-sass',       '3.2.0.0'
-gem 'sass-rails',           '5.0.2'
-gem 'uglifier',             '2.5.3'
-gem 'coffee-rails',         '4.1.0'
-gem 'jquery-rails',         '4.0.3'
-gem 'turbolinks',           '2.3.0'
-gem 'jbuilder',             '2.2.3'
-gem 'sdoc',                 '0.4.0', group: :doc
-gem 'pg',                   '0.17.1'
-gem 'strava-api-v3'
-gem 'momentjs-rails', '>= 2.9.0'
-gem 'bootstrap3-datetimepicker-rails'
+gem 'rails',                '~> 5.1'
+gem 'bootstrap-sass',       '3.3.0'
+gem 'sass-rails',           '~> 5.0.2'
+gem 'uglifier',             '~> 3.2.0'
+gem 'coffee-rails',         '~> 4.2.2'
+gem 'jquery-rails',         '~> 4.3.0'
+gem 'jbuilder',             '~> 2.7.0'
+gem 'pg',                   '~> 0.21.0'
+gem 'strava-api-v3',        '~> 0.7.0'
+gem 'momentjs-rails',       '~> 2.17.1'
+gem 'bootstrap3-datetimepicker-rails', '~> 4.17.47'
+gem 'json',                 '~> 2.1.0'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -26,14 +25,14 @@ gem 'bootstrap3-datetimepicker-rails'
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
-  gem 'byebug',      '3.4.0'
-  gem 'web-console', '2.0.0.beta3'
-  gem 'spring',      '1.1.3'
-  gem 'whenever', :require => false
+  gem 'pry'
+  gem 'byebug',     '~> 9.1.0'
+  gem 'spring',     '~> 2.0.2'
+  gem 'whenever',   :require => false
+  gem 'dotenv',     '~> 2.2.0'
 end
 
 group :production do
-  gem 'rails_12factor', '0.0.2'
-  gem 'puma',           '3.1.0'
+  gem 'puma', '3.10.0'
 end
 

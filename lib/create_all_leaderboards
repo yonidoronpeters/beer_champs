@@ -15,15 +15,11 @@ end
 
 def create_new_entry_for_athlete(activity)
   athlete = Athlete.find(activity.athlete_id)
-  if @legacy
-    l_entry = Leaderboard.create(athlete_id:   athlete.id, created_at: activity.created_at, calories: activity.calories,
-                                 beers:        activity.beers, img_url: athlete.img_url,
-                                 athlete_name: athlete.name, activity_id: activity.id)
-  else
-    l_entry = Leaderboard.create(athlete_id:   athlete.id, created_at: activity.start_date_local, calories: activity.calories,
-                                 beers:        activity.beers, img_url: athlete.img_url,
-                                 athlete_name: athlete.name, activity_id: activity.id)
-  end
+  created_at = @legacy ? activity.created_at : activity.start_date_local
+  l_entry = Leaderboard.create(
+    athlete_id: athlete.id, created_at: created_at, calories: activity.calories,
+    beers: activity.beers, img_url: athlete.img_url, athlete_name: athlete.name
+  )
   l_entry.activities << activity
 end
 

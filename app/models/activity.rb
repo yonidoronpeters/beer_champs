@@ -1,17 +1,16 @@
 require 'client_utils'
 
-class Activity < ActiveRecord::Base
+class Activity < ApplicationRecord
   extend ClientUtils
   belongs_to :athlete
   belongs_to :leaderboard
-  before_destroy :detach_from_athlete, :detach_from_leaderboard
+  before_destroy :delete_leaderboard_if_empty
 
   class << self
-
     def fetch_activities(page=1, per_page=30)
-      @club_id = 202870
-
-      club_activities = client.list_club_activities(@club_id, per_page: per_page, page: page)
+      club_activities = client.list_club_activities(
+        ENV['CLUB_ID'], per_page: per_page, page: page
+      )
       new_activities  = create_activities(club_activities)
 
       unless new_activities.empty?
@@ -21,39 +20,33 @@ class Activity < ActiveRecord::Base
     end
 
     def create_activities(activities)
-      new_activities = Array.new
+      new_activities = []
       activities.each do |activity|
+        next if Activity.exists?(activity['id'])
+        athlete       = Athlete.get_or_create_athlete(activity['athlete'])
+        full_activity = client.retrieve_an_activity(activity['id'])
+        calories      = calc_calories(full_activity)
         begin
-          if Activity.find(activity['id'])
-            next
-          end
+          new_activity = create_activity(full_activity, athlete, calories)
         rescue
-          athlete       = Athlete.get_or_create_athlete(activity['athlete'])
-          full_activity = client.retrieve_an_activity(activity['id'])
-          calories      = calc_calories(full_activity)
-          begin
-            new_activity = create_activity(full_activity, athlete, calories)
-          rescue
-            new_activity = create_activity_without_loc(full_activity, athlete, calories)
-          end
-          new_activities.push(new_activity)
+          new_activity = create_activity_without_loc(full_activity, athlete, calories)
         end
+        new_activities.push(new_activity)
       end
       new_activities
     end
 
     def sync_activities(n=5)
-      activities_to_update = Activity.order('created_at DESC').limit(n)
-      activities_to_update.each do |activity|
+      Activity.order(created_at: :desc).limit(n).each do |activity|
         update_activity(activity)
       end
     end
 
     def calc_calories(activity)
       calories = 0
-      if activity['calories'] and activity['calories'] != 0
+      if activity['calories'] && activity['calories'] != 0
         calories += activity['calories']
-      elsif not activity['kilojoules'].nil?
+      elsif !activity['kilojoules'].blank?
         calories += kj_to_cal(activity['kilojoules'])
       else
         calories += time_to_cal(activity['moving_time'])
@@ -71,26 +64,28 @@ class Activity < ActiveRecord::Base
 
       def create_activity(full_activity, athlete, calories)
         Activity.create(
-            id:                   full_activity['id'], name: full_activity['name'], distance: full_activity['distance'],
-            activity_type:        full_activity['type'], moving_time: full_activity['moving_time'],
-            total_elevation_gain: full_activity['total_elevation_gain'],
-            calories:             calories, start_lat: full_activity['start_latlng'][0],
-            start_long:           full_activity['start_latlng'][1], end_lat: full_activity['end_latlng'][0],
-            end_long:             full_activity['end_latlng'][1], kudos_count: full_activity['kudos_count'],
-            created_at:           full_activity['start_date'], athlete_id: athlete.id,
-            beers:                calc_beers(calories), timezone: full_activity['timezone'],
-            start_date_local:     full_activity['start_date_local'])
+          id:                   full_activity['id'], name: full_activity['name'], distance: full_activity['distance'],
+          activity_type:        full_activity['type'], moving_time: full_activity['moving_time'],
+          total_elevation_gain: full_activity['total_elevation_gain'],
+          calories:             calories, start_lat: full_activity['start_latlng'][0],
+          start_long:           full_activity['start_latlng'][1], end_lat: full_activity['end_latlng'][0],
+          end_long:             full_activity['end_latlng'][1], kudos_count: full_activity['kudos_count'],
+          created_at:           full_activity['start_date'], athlete_id: athlete.id,
+          beers:                calc_beers(calories), timezone: full_activity['timezone'],
+          start_date_local:     full_activity['start_date_local']
+        )
       end
 
       def create_activity_without_loc(full_activity, athlete, calories)
         Activity.create(
-            id:                   full_activity['id'], name: full_activity['name'], distance: full_activity['distance'],
-            activity_type:        full_activity['type'], moving_time: full_activity['moving_time'],
-            total_elevation_gain: full_activity['total_elevation_gain'],
-            calories:             calories, kudos_count: full_activity['kudos_count'],
-            created_at:           full_activity['start_date'], athlete_id: athlete.id,
-            beers:                calc_beers(calories), timezone: full_activity['timezone'],
-            start_date_local:     full_activity['start_date_local'])
+          id:                   full_activity['id'], name: full_activity['name'], distance: full_activity['distance'],
+          activity_type:        full_activity['type'], moving_time: full_activity['moving_time'],
+          total_elevation_gain: full_activity['total_elevation_gain'],
+          calories:             calories, kudos_count: full_activity['kudos_count'],
+          created_at:           full_activity['start_date'], athlete_id: athlete.id,
+          beers:                calc_beers(calories), timezone: full_activity['timezone'],
+          start_date_local:     full_activity['start_date_local']
+        )
       end
 
       def update_activity(activity)
@@ -104,15 +99,15 @@ class Activity < ActiveRecord::Base
         reload_leaderboard(activity)
       end
 
-    def reload_leaderboard(activity)
-      begin
-        Leaderboard.find(activity.leaderboard_id).activities.reload
-      rescue ActiveRecord::RecordNotFound
-        # activity is not part of leaderboard yet. No need to reload
+      def reload_leaderboard(activity)
+        begin
+          Leaderboard.find(activity.leaderboard_id).activities.reload
+        rescue ActiveRecord::RecordNotFound
+          # activity is not part of leaderboard yet. No need to reload
+        end
       end
-    end
 
-    def kj_to_cal(kj)
+      def kj_to_cal(kj)
         1.1173 * kj
       end
 
@@ -120,17 +115,10 @@ class Activity < ActiveRecord::Base
       def time_to_cal(sec)
         sec * 0.11111
       end
-
   end
 
-  #################################################
   private
-    def detach_from_leaderboard
-      leaderboard.activities.delete(self)
-      leaderboard.destroy if leaderboard.activities.empty?
-    end
-
-    def detach_from_athlete
-      athlete.activities.delete(self)
+    def delete_leaderboard_if_empty
+      leaderboard.destroy if leaderboard.activities.length == 1
     end
 end
