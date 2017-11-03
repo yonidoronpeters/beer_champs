@@ -11,3 +11,10 @@ task :sync_activities => :environment do
   Activity.sync_activities
   puts "Done."
 end
+
+desc "This task updates athlete profiles to reflect changes made in Strava"
+task :sync_athletes => :environment do
+  puts "Syncing athletes..."
+  Athlete.sync_athletes
+  puts "Done."
+end
