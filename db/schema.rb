@@ -33,9 +33,10 @@ ActiveRecord::Schema.define(version: 20171027050112) do
     t.integer "beers"
     t.string "timezone"
     t.datetime "start_date_local"
-    t.bigint "leaderboard_id"
+    t.integer "leaderboard_id"
     t.index ["athlete_id", "created_at"], name: "index_activities_on_athlete_id_and_created_at"
     t.index ["athlete_id"], name: "index_activities_on_athlete_id"
+    t.index ["leaderboard_id", "created_at"], name: "index_activities_on_leaderboard_id_and_created_at"
     t.index ["leaderboard_id"], name: "index_activities_on_leaderboard_id"
   end
 

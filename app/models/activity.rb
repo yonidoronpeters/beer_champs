@@ -24,12 +24,11 @@ class Activity < ApplicationRecord
       activities.each do |activity|
         next if Activity.exists?(activity['id'])
         athlete       = Athlete.get_or_create_athlete(activity['athlete'])
-        full_activity = client.retrieve_an_activity(activity['id'])
-        calories      = calc_calories(full_activity)
+        calories      = calc_calories(activity)
         begin
-          new_activity = create_activity(full_activity, athlete, calories)
+          new_activity = create_activity(activity, athlete, calories)
         rescue
-          new_activity = create_activity_without_loc(full_activity, athlete, calories)
+          new_activity = create_activity_without_loc(activity, athlete, calories)
         end
         new_activities.push(new_activity)
       end
@@ -111,14 +110,15 @@ class Activity < ApplicationRecord
         1.1173 * kj
       end
 
-      # Based on 400cal/hr
+      # Based on 600cal/hr
       def time_to_cal(sec)
-        sec * 0.11111
+        # 600cal/60min/60sec = 0.16667
+        sec * 0.16667
       end
   end
 
   private
     def delete_leaderboard_if_empty
-      leaderboard.destroy if leaderboard.activities.length == 1
+      leaderboard.destroy if !leaderboard.nil? && leaderboard.activities.length == 1
     end
 end
