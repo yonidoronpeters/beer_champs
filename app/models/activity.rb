@@ -91,9 +91,9 @@ class Activity < ApplicationRecord
         begin
           updated = client.retrieve_an_activity(activity.id)
           activity.update(name: updated['name'], activity_type: updated['type'], kudos_count: updated['kudos_count'])
-        rescue Strava::Api::V3::ClientError
+        rescue Strava::Api::V3::ClientError => e
           # activity has been deleted on strava
-          activity.destroy
+          activity.destroy if e.code.equal? 404
         end
         reload_leaderboard(activity)
       end
