@@ -23,7 +23,7 @@ class Leaderboard < ApplicationRecord
       end
 
       def update_entry(activity, l)
-        new_calories = l.calories + activity.calories
+        new_calories = l.activities.sum(:calories) + activity.calories
         l.update_attributes(
           calories: new_calories,
           beers: Activity.calc_beers(new_calories)

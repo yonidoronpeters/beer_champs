@@ -89,6 +89,7 @@ class Activity < ApplicationRecord
 
       def update_activity(activity)
         begin
+          # TODO Can't get activities this way anymore
           updated = client.retrieve_an_activity(activity.id)
           activity.update(name: updated['name'], activity_type: updated['type'], kudos_count: updated['kudos_count'])
         rescue Strava::Api::V3::ClientError => e
