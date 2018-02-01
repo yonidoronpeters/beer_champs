@@ -22,15 +22,12 @@ class Activity < ApplicationRecord
     def create_activities(activities)
       new_activities = []
       activities.each do |activity|
-        update_activity(activity) if Activity.exists?(activity['id'])
-        athlete       = Athlete.get_or_create_athlete(activity['athlete'])
-        calories      = calc_calories(activity)
-        begin
-          new_activity = create_activity(activity, athlete, calories)
-        rescue
-          new_activity = create_activity_without_loc(activity, athlete, calories)
+        if Activity.exists?(activity['id'])
+          update_activity(activity)
+        else
+          new_activity = new_activity(activity)
+          new_activities.push(new_activity)
         end
-        new_activities.push(new_activity)
       end
       new_activities
     end
@@ -54,6 +51,17 @@ class Activity < ApplicationRecord
 
     ####################################################
     private
+
+      def new_activity(activity)
+        athlete  = Athlete.get_or_create_athlete(activity['athlete'])
+        calories = calc_calories(activity)
+        begin
+          new_activity = create_activity(activity, athlete, calories)
+        rescue
+          new_activity = create_activity_without_loc(activity, athlete, calories)
+        end
+        new_activity
+      end
 
       def create_activity(full_activity, athlete, calories)
         Activity.create(
