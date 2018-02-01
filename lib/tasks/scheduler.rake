@@ -5,13 +5,6 @@ task :fetch_activities => :environment do
   puts "Done."
 end
 
-desc "This task updates syncs the activities in the db with the ones on the strava server"
-task :sync_activities => :environment do
-  puts "Syncing activities..."
-  Activity.sync_activities
-  puts "Done."
-end
-
 desc "This task updates athlete profiles to reflect changes made in Strava"
 task :sync_athletes => :environment do
   puts "Syncing athletes..."

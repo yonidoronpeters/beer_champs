@@ -1,6 +1,0 @@
-#!/usr/bin/env ruby
-
-n = ARGV[0]
-n = 30 if n.nil?
-
-Activity.sync_activities(n)
