@@ -22,7 +22,7 @@ class Activity < ApplicationRecord
     def create_activities(activities)
       new_activities = []
       activities.each do |activity|
-        next if Activity.exists?(activity['id'])
+        update_activity(activity) if Activity.exists?(activity['id'])
         athlete       = Athlete.get_or_create_athlete(activity['athlete'])
         calories      = calc_calories(activity)
         begin
@@ -33,12 +33,6 @@ class Activity < ApplicationRecord
         new_activities.push(new_activity)
       end
       new_activities
-    end
-
-    def sync_activities(n=5)
-      Activity.order(created_at: :desc).limit(n).each do |activity|
-        update_activity(activity)
-      end
     end
 
     def calc_calories(activity)
@@ -87,16 +81,12 @@ class Activity < ApplicationRecord
         )
       end
 
-      def update_activity(activity)
-        begin
-          # TODO Can't get activities this way anymore
-          updated = client.retrieve_an_activity(activity.id)
-          activity.update(name: updated['name'], activity_type: updated['type'], kudos_count: updated['kudos_count'])
-        rescue Strava::Api::V3::ClientError => e
-          # activity has been deleted on strava
-          activity.destroy if e.code.equal? 404
-        end
-        reload_leaderboard(activity)
+      def update_activity(latest)
+        updated = Activity.update(latest['id'],
+                          name: latest['name'],
+                          activity_type: latest['type'],
+                          kudos_count: latest['kudos_count'])
+        reload_leaderboard(updated)
       end
 
       def reload_leaderboard(activity)
